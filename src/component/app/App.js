@@ -3,7 +3,7 @@ import styles from "./App.module.css";
 import SearchResults from "../searchresults/SearchResults";
 import Playlist from "../playlist/Playlist";
 import SearchBar from "../searchbar/SearchBar";
-import { Spotify } from "../../util/spotify/Spotify";
+import { Spotify } from "../../util/spotify/Spotify.js";
 
 function App() {
   const [searchResults, setSearchResults] = useState([
