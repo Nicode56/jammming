@@ -1,8 +1,8 @@
 import React from 'react'; // Removed unused { useState } since this is a Class component
 import styles from './App.module.css';
-import SearchBar from '../searchbar/SearchBar.js';
-import Playlist from '../playlist/Playlists.js';
-import SearchResults from '../searchresults/SearchResults.js';
+import SearchBar from './component/searchbar/SearchBar.js';
+import Playlist from './component/playlist/Playlist.js';
+import SearchResults from '.component/searchresults/SearchResults.js';
 import { Spotify } from '../../util/spotify/Spotify.js';
 
 class App extends React.Component {
