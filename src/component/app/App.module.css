@@ -36,13 +36,13 @@ h2 {
 .App {
   height: 100%;
   padding: 0 17% 10% 17%;
-  background-image: url('./background_photo_desktop.a0687f3fe6f1303a2d18.jpg');
+  background-image: url('C:\Users\nakel\jammming\src\component\app\background_photo_desktop.a0687f3fe6f1303a2d18.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   font-family: 'Work Sans', sans-serif;
   font-weight: 500;
-  color: #fff;
+  color: #ffffff;
 }
 
 .App-playlist {
