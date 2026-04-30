@@ -10,7 +10,7 @@ export class SearchResults extends React.Component {
         
         <TrackList 
           // FIX 1: Access via this.props and use the correct variable name
-          tracks={this.props.searchResults}
+          tracks={this.props.searchResults || []}
           onAdd={this.props.onAdd}
           // FIX 2: Pass onRemove to keep the TrackList happy
           onRemove={this.props.onRemove} 

@@ -84,7 +84,11 @@ function App() {
 
         <div className={styles["App-playlist"]}>
           {/* <!-- Add a SearchResults component --> */}
-          <SearchResults userSearchResults={searchResults} onAdd={addTrack} />
+          <SearchResults 
+          searchResults={searchResults} 
+          onAdd={addTrack}
+          onRemove={removeTrack}
+          />
           {/* passing searchResults state to the SearchResults component as userSearchResults */}
 
           {/* <!-- Add a Playlist component --> */}
