@@ -77,6 +77,8 @@ const Spotify = {
 
     authUrl.search = new URLSearchParams(params).toString();
     window.location.href = authUrl.toString();
+
+    console.log("AUTH URL:", authUrl.toString());
   },
 
   async search(term) {

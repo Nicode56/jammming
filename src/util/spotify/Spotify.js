@@ -4,7 +4,7 @@ const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const scope = 'playlist-modify-public';
 console.log("Spotify Client ID:", clientID);
 console.log("Spotify Scope:", scope);
-const redirectUrl = window.location.origin; // Dynamically use the current host and port
+const redirectUrl = "http://127.0.0.1:3000"; // Dynamically use the current host and port
 const tokenStorageKey = 'spotify_access_token';
 const expiresAtKey = 'spotify_token_expiry';
 
