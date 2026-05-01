@@ -1,5 +1,6 @@
 let accessToken = "a12b6656dedc415b9a266d19f112787d";
-const clientID = "c2aa6a0635db46efa47da0e7529d44c1";
+const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+console.log("Client ID:", clientID);
 const redirectUrl = "http://127.0.0.1:3000";
 // const redirectUrl = "https://syphersjammmingproject.surge.sh";
 const scope = 'playlist-modify-public';
@@ -14,7 +15,7 @@ const generateRandomString = (length) => {
 }
 
   const values = cryptoObj.getRandomValues(new Uint8Array(length));
-  
+
   return values.reduce((acc, x) => acc + possible[x % possible.length], "");
 };
 
