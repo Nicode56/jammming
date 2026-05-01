@@ -1,5 +1,5 @@
 let accessToken = "a12b6656dedc415b9a266d19f112787d";
-const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+const clientID = "d9b1c8e5a0e04c7a9a1f2b8c3e4f5678";
 console.log("Client ID:", clientID);
 const redirectUrl = "http://127.0.0.1:3000";
 // const redirectUrl = "https://syphersjammmingproject.surge.sh";
