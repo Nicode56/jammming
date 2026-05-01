@@ -7,9 +7,16 @@ const authUrl = new URL("https://accounts.spotify.com/authorize");
 
 const generateRandomString = (length) => {
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const values = crypto.getRandomValues(new Uint8Array(length));
-  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+  const cryptoObj = window.crypto || window.msCrypto;
+  if (!cryptoObj) {
+    console.error('Crypto API not available');
+  return "";
 }
+
+  const values = cryptoObj.getRandomValues(new Uint8Array(length));
+  
+  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+};
 
 const codeVerifier = generateRandomString(64);
 
@@ -57,7 +64,13 @@ const Spotify = {
       const body = await fetch(url, payload);
       const response = await body.json();
 
-      return response.access_token;
+      accessToken = response.access_token;
+      // store the access token so it persists
+      localStorage.setItem('access_token', accessToken);
+    // clean the URL to remove the code parameter
+      window.history.replaceState({}, document.title, "/");
+
+      return accessToken;
 
     }
 
