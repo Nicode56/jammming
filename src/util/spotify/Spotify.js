@@ -124,7 +124,7 @@ async function ensureAccessToken() {
   const stored = localStorage.getItem("access_token");
   if (stored) {
     accessToken = stored;
-    console.log("USING STORED TOKEN:");
+    console.log("USING STORED TOKEN");
     return accessToken;
   } 
 
@@ -136,19 +136,12 @@ async function ensureAccessToken() {
     return await exchangeCodeForToken(code);
   }
 
-
-  // 4. Critical guard: prevent infinite redirect loops
-  const justReturned = sessionStorage.getItem("just_returned");
-
-  if (!justReturned) {
-    sessionStorage.setItem("just_returned", "true");
-
+  // 4. Otherwise > redirect
     console.log("Redirecting to Spotify for login...");
     await redirectToAuthorize();
-  }
+  
 
-  // Prevent infinite loop
-  throw new Error("Auth failed - stopping loop");
+  throw new Error("Redirecting...");
 }
 
 /* -------------------- API wrapper -------------------- */
