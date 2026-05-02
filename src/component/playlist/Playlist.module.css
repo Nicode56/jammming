@@ -21,7 +21,7 @@
     color: #fff;
 }
 
-.Playlist-save {
+.SaveButton {
     cursor: pointer;
     width: 10rem;
     padding: .77rem 0;
@@ -36,9 +36,13 @@
     font-weight: 500;
 }
 
-.Playlist-save:hover {
+
+
+.SaveButton:hover {
     background-color: rgba(108, 65, 233, .7);
 }
+
+
 
 ::-webkit-scrollbar {
     width: 0px;

@@ -1,32 +1,28 @@
-import React from 'react';
-import TrackList from '../tracklist/TrackList';
-import styles from './Playlist.module.css'; // Standard way to import CSS modules
+import React from "react";
+import TrackList from "../tracklist/TrackList";
+import styles from "./Playlist.module.css";
 
-export class Playlist extends React.Component {
-  render() {
-    return (
-      <div className={styles.Playlist}>
-        <input
-        className={styles['Playlist-name']}
-        value={this.props.playlistName}
-        onChange={(event) => this.props.onNameChange(event.target.value)}
-      />
-        
-        {/* Pass the tracks down to TrackList */}
-        <TrackList 
-          tracks={this.props.playlistTracks} 
-          onRemove={this.props.onRemove} 
-          isRemoval={true} 
-        />
+export default function Playlist({ playlistName, playlistTracks, onRemove, onNameChange, onSave, isSaving }) {
+  const handleNameChange = (e) => {
+    if (typeof onNameChange === "function") onNameChange(e.target.value);
+  };
 
-        {/* FIX 1: Use this.props.onSave instead of Playlist.onSave */}
-        <button className={styles['Playlist-save']} onClick={this.props.onSave}>
-          SAVE TO SPOTIFY
-        </button>
-      </div>
-    );
-  } // FIX 2: Removed the semicolon and extra curly brace that were here
+  const handleSave = () => {
+    if (typeof onSave === "function") onSave();
+  };
+
+  const safeTracks = Array.isArray(playlistTracks) ? playlistTracks : [];
+
+  return (
+    <div className={styles.Playlist || ""}>
+      <input value={playlistName || ""} onChange={handleNameChange} className={styles.PlaylistName || ""} />
+
+      <TrackList tracks={safeTracks} onRemove={onRemove} isRemoval={true} />
+
+      <button className={styles.SaveButton || ""} onClick={handleSave} disabled={isSaving || safeTracks.length === 0}>
+        {isSaving ? "Saving..." : "SAVE TO SPOTIFY"}
+      </button>
+    </div>
+  );
 }
-
-export default Playlist;
 

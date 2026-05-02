@@ -1,44 +1,50 @@
-import React from 'react';
-import styles from './Track.module.css';
+import React from "react";
+import styles from "./Track.module.css";
 
 export class Track extends React.Component {
-
   addTrack = () => {
-    this.props.onAdd(this.props.track);
-  }
+    const { onAdd, track } = this.props;
+    if (typeof onAdd === "function" && track) onAdd(track);
+  };
 
   removeTrack = () => {
-    this.props.onRemove(this.props.track);
-  }
+    const { onRemove, track } = this.props;
+    if (typeof onRemove === "function" && track) onRemove(track);
+  };
 
   renderAction() {
-    if (this.props.isRemoval) {
+    const isRemoval = Boolean(this.props.isRemoval);
+    const actionClass = (styles && styles["Track-action"]) || "";
+
+    if (isRemoval) {
       return (
-        // FIX: Use the styles object for CSS Modules
-        <button className={styles['Track-action']} onClick={this.removeTrack}>
+        <button className={actionClass} onClick={this.removeTrack} aria-label="Remove track">
           -
         </button>
       );
-    } else {
-      return (
-        // FIX: Use the styles object for CSS Modules
-        <button className={styles['Track-action']} onClick={this.addTrack}>
-          +
-        </button>
-      );
     }
+
+    return (
+      <button className={actionClass} onClick={this.addTrack} aria-label="Add track">
+        +
+      </button>
+    );
   }
 
   render() {
+    const track = this.props.track || {};
+    const trackClass = (styles && styles.Track) || "";
+    const infoClass = (styles && styles["Track-information"]) || "";
+
     return (
-      <div className={styles.Track}>
-        <div className={styles['Track-information']}>
-          <h3>{this.props.track.name}</h3>
+      <div className={trackClass}>
+        <div className={infoClass}>
+          <h3>{track.name || "Unknown title"}</h3>
           <p>
-            {this.props.track.artist} | {this.props.track.album}
-          </p>  
+            {track.artist || "Unknown artist"} | {track.album || "Unknown album"}
+          </p>
         </div>
-        
+
         {this.renderAction()}
       </div>
     );
