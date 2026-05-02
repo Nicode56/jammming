@@ -7,7 +7,7 @@ const TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token";
 const API_BASE = "https://api.spotify.com/v1";
 
 /* -------------------- helpers -------------------- */
-// ⭐ Clear ?code=... BEFORE React loads
+//Clear ?code=... BEFORE React loads
 
 function generateRandomString(length = 128) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
@@ -41,7 +41,7 @@ function getCodeFromUrl() {
 /* -------------------- auth flow -------------------- */
 
 async function redirectToAuthorize() {
-  sessionStorage.removeItem("just_returned");
+  
   let codeVerifier = sessionStorage.getItem("code_verifier");
 
   if (!codeVerifier) {
@@ -67,7 +67,11 @@ async function exchangeCodeForToken(code) {
   const verifier = sessionStorage.getItem("code_verifier");
 
   if (!verifier) {
-    throw new Error("Missing code_verifier");
+    console.error(" Missing code_verifier - restarting auth flow");
+
+    window.history.replaceState({}, document.title, "/");
+
+throw new Error("Code verifier not found");
   }
 
   const body = new URLSearchParams({
@@ -88,14 +92,14 @@ async function exchangeCodeForToken(code) {
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("❌ TOKEN EXCHANGE FAILED:", errorText);
+    console.error("TOKEN EXCHANGE FAILED:", errorText);
     throw new Error("Token exchange failed");
   }
 
   const json = await res.json();
 
   if (!json.access_token) {
-    console.error("❌ NO ACCESS TOKEN IN RESPONSE:", json);
+    console.error("NO ACCESS TOKEN IN RESPONSE:", json);
     throw new Error("No access token returned");
   }
 
@@ -119,29 +123,28 @@ async function exchangeCodeForToken(code) {
 async function ensureAccessToken() {
   // 1. In memory
   if (accessToken) return accessToken;
- 
+
   // 2. Local storage
   const stored = localStorage.getItem("access_token");
   if (stored) {
     accessToken = stored;
     console.log("USING STORED TOKEN");
     return accessToken;
-  } 
+  }
 
   // 3. Handle redirect return
   const code = getCodeFromUrl();
 
   if (code) {
-    console.log("Exchanging code for token...");
+    console.log(" Exchanging code for token...");
     return await exchangeCodeForToken(code);
   }
 
-  // 4. Otherwise > redirect
-    console.log("Redirecting to Spotify for login...");
-    await redirectToAuthorize();
-  
+  // 4. Only redirect if NO token AND NO code
+  console.log(" Redirecting to Spotify login...");
+  await redirectToAuthorize();
 
-  throw new Error("Redirecting...");
+  return null; //  DO NOT throw
 }
 
 /* -------------------- API wrapper -------------------- */
@@ -167,7 +170,7 @@ async function apiFetch(path, options = {}) {
   });
 
   if (res.status === 401) {
-    console.warn("⚠️ Token invalid, retrying...");
+    console.warn("Token invalid, retrying...");
 
     clearStoredToken();
 
