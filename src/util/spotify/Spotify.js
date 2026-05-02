@@ -38,13 +38,10 @@ function getCodeFromUrl() {
   return new URLSearchParams(window.location.search).get("code");
 }
 
-function getErrorFromUrl() {
-  return new URLSearchParams(window.location.search).get("error");
-}
-
 /* -------------------- auth flow -------------------- */
 
 async function redirectToAuthorize() {
+  sessionStorage.removeItem("just_returned");
   let codeVerifier = sessionStorage.getItem("code_verifier");
 
   if (!codeVerifier) {
@@ -63,7 +60,6 @@ async function redirectToAuthorize() {
     code_challenge: codeChallenge,
   });
 
-  console.log("Redirecting to Spotify...");
   window.location = `${AUTH_ENDPOINT}?${params.toString()}`;
 }
 
@@ -128,30 +124,31 @@ async function ensureAccessToken() {
   const stored = localStorage.getItem("access_token");
   if (stored) {
     accessToken = stored;
-    console.log("USING STORED TOKEN:", stored);
+    console.log("USING STORED TOKEN:");
     return accessToken;
   } 
 
   // 3. Handle redirect return
   const code = getCodeFromUrl();
+
   if (code) {
     console.log("Exchanging code for token...");
     return await exchangeCodeForToken(code);
   }
 
 
-  // 4. Only redirect if needed
-  console.log("Redirecting to Spotify login...");
-  await redirectToAuthorize();
+  // 4. Critical guard: prevent infinite redirect loops
+  const justReturned = sessionStorage.getItem("just_returned");
 
-  throw new Error("Redirecting to Spotify...");
-}
+  if (!justReturned) {
+    sessionStorage.setItem("just_returned", "true");
 
-const authError = getErrorFromUrl();
+    console.log("Redirecting to Spotify for login...");
+    await redirectToAuthorize();
+  }
 
-if (authError) {
-  console.error("❌ Spotify auth error:", authError);
-  throw new Error(authError);
+  // Prevent infinite loop
+  throw new Error("Auth failed - stopping loop");
 }
 
 /* -------------------- API wrapper -------------------- */
