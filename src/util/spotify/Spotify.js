@@ -42,10 +42,6 @@ function getErrorFromUrl() {
   return new URLSearchParams(window.location.search).get("error");
 }
 
-function clearUrlQuery() {
-  window.history.replaceState({}, document.title, window.location.pathname);
-}
-
 /* -------------------- auth flow -------------------- */
 
 async function redirectToAuthorize() {
@@ -74,6 +70,10 @@ async function redirectToAuthorize() {
 async function exchangeCodeForToken(code) {
   const verifier = sessionStorage.getItem("code_verifier");
 
+  if (!verifier) {
+    throw new Error("Missing code_verifier");
+  }
+
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     code,
@@ -84,13 +84,15 @@ async function exchangeCodeForToken(code) {
 
   const res = await fetch(TOKEN_ENDPOINT, {
     method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    headers: { "Content-Type": "application/x-www-form-urlencoded",
+
+     },
     body: body.toString(),
   });
 
   if (!res.ok) {
     const errorText = await res.text();
-    console.error("❌ TOKEN ERROR:", errorText);
+    console.error("❌ TOKEN EXCHANGE FAILED:", errorText);
     throw new Error("Token exchange failed");
   }
 
@@ -101,60 +103,56 @@ async function exchangeCodeForToken(code) {
     throw new Error("No access token returned");
   }
 
-  accessToken = json.access_token;
+  const token = json.access_token;
+
+  accessToken = token;
+  localStorage.setItem("access_token", token);
 
   const expiry = new Date(Date.now() + json.expires_in * 1000);
-  localStorage.setItem("access_token", json.access_token);
   localStorage.setItem("token_expiry", expiry.toISOString());
 
-  console.log("VALID TOKEN:", accessToken);
+  sessionStorage.removeItem("code_verifier");
+  window.history.replaceState({}, document.title, window.location.pathname);
+  
 
-  clearUrlQuery();
-  window.history.replaceState({}, document.title, "/");
+  console.log("TOKEN STORED:", token);
 
-  return json.access_token;
+  return token;
 }
 
 async function ensureAccessToken() {
-  // 1. Try storage first
+  // 1. In memory
   if (accessToken) return accessToken;
  
-  // 2. Try stored token (ignore expiry for now)
+  // 2. Local storage
   const stored = localStorage.getItem("access_token");
   if (stored) {
     accessToken = stored;
-    console.log("Using stored token");
+    console.log("USING STORED TOKEN:", stored);
     return accessToken;
   } 
 
-  const authError = getErrorFromUrl();
-    if (authError) {
-      console.error("Spotify auth error:", authError);
-      throw new Error(authError);
-  }
-
-  // 3. Check for code from redirect
+  // 3. Handle redirect return
   const code = getCodeFromUrl();
   if (code) {
     console.log("Exchanging code for token...");
-
-    const token = await exchangeCodeForToken(code);
-
-    return token;
+    return await exchangeCodeForToken(code);
   }
 
-  // 4. Only redirect ONCE
-  const alreadyRedirected = sessionStorage.getItem("auth_redirect");
 
-  if (!alreadyRedirected) {
-    sessionStorage.setItem("auth_redirect", "true");
+  // 4. Only redirect if needed
+  console.log("Redirecting to Spotify login...");
+  await redirectToAuthorize();
 
-    console.log("Redirecting to Spotify login...");
-    await redirectToAuthorize();
-  }
+  throw new Error("Redirecting to Spotify...");
+}
 
-  throw new Error("No token available");
-  }
+const authError = getErrorFromUrl();
+
+if (authError) {
+  console.error("❌ Spotify auth error:", authError);
+  throw new Error(authError);
+}
 
 /* -------------------- API wrapper -------------------- */
 
