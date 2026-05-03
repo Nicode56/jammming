@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import styles from "./App.module.css";
-import SearchBar from "../SearchBar/SearchBar";
-import SearchResults from "../SearchResults/SearchResults";
-import Playlist from "../Playlist/Playlist";
-import Spotify from "../../util/Spotify";
+import SearchBar from "../searchbar/SearchBar";
+import SearchResults from "../searchresults/SearchResults";
+import Playlist from "../playlist/Playlist";
+import Spotify from "../../util/spotify/Spotify";
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
@@ -12,7 +12,10 @@ function App() {
   const [user, setUser] = useState(null);
 
   function search(term) {
-    Spotify.search(term).then(setSearchResults);
+    Spotify.search(term).then((results) => {
+      console.log("SEARCH RESULTS:", results);
+      setSearchResults(results);
+    });
   }
 
   function addTrack(track) {
@@ -35,14 +38,14 @@ function App() {
     setPlaylistTracks([]);
   }
 
-  // 🎧 LOAD USER PROFILE
+  // LOAD USER PROFILE
   useEffect(() => {
     async function loadUser() {
       try {
         const profile = await Spotify.getProfile();
         setUser(profile);
       } catch (err) {
-        console.error("Profile failed", err);
+        console.error(err);
       }
     }
 
@@ -57,7 +60,7 @@ function App() {
 
       {/* USER DISPLAY */}
       {user && (
-        <h2 style={{ color: "white" }}>
+        <h2 style={{ color: "white", backgroundColor: "purple", padding: "20px", borderRadius: "5px" }}>
           Welcome, {user.display_name} 🎧
         </h2>
       )}

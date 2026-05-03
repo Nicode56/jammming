@@ -4,25 +4,41 @@ const Spotify = {
   async search(term) {
     const token = await PKCESpotify.getAccessToken();
 
+    console.log("TOKEN:", token);
+
     if (!token) {
-      console.error("No token available");
+      console.error("No access token");
       return [];
     }
 
     const response = await fetch(
       `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(term)}`,
       {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       }
     );
 
-    const jsonResponse = await response.json();
+    console.log("STATUS:", response.status);
 
-    if (!jsonResponse.tracks) return [];
+    // 🔥 FIX: handle non-JSON responses safely
+  let json;
+  try {
+    json = await response.json();
+  } catch (err) {
+    const text = await response.text();
+    console.error("❌ Non-JSON response:", text);
+    return [];
+  }
 
-    return jsonResponse.tracks.items.map((track) => ({
+    console.log("RAW RESPONSE:", json);
+
+    if (!json.tracks) return [];
+
+    return json.tracks.items.map((track) => ({
       id: track.id,
       name: track.name,
       artist: track.artists[0].name,
@@ -65,7 +81,8 @@ const Spotify = {
       }
     ).then((res) => res.json());
 
-    await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, {
+    await fetch(`https://api.spotify.com/v1/playlists/${playlist.id}/tracks`, 
+      {
       method: "POST",
       headers: {
         ...headers,

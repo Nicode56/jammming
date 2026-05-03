@@ -1,20 +1,22 @@
 let accessToken = "";
 let expiresAt = 0;
 
-const clientID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
-const redirectUrl = "http://127.0.0.1:3000";
+const clientID = "c2aa6a0635db46efa47da0e7529d44c1";
+const redirectUrl = "https://jammmplays.netlify.app";
 
 // ─────────────────────────────
 // PKCE helpers
 // ─────────────────────────────
-function generateCodeVerifier(length = 128) {
-  const chars =
+function generateCodeVerifier(length = 64) {
+  const possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
-  let verifier = "";
-  for (let i = 0; i < length; i++) {
-    verifier += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return verifier;
+
+  const values = crypto.getRandomValues(new Uint8Array(length));
+
+  return values.reduce(
+    (acc, x) => acc + possible[x % possible.length],
+    ""
+  );
 }
 
 async function generateCodeChallenge(codeVerifier) {
@@ -43,23 +45,23 @@ const PKCESpotify = {
     if (storedToken && Date.now() < storedExpiry) {
       accessToken = storedToken;
       expiresAt = storedExpiry;
-      console.log("♻️ USING STORED TOKEN");
+      console.log("USING STORED TOKEN");
       return accessToken;
     }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
 
     // ─── Handle redirect return ───
     if (code) {
-      const codeVerifier = localStorage.getItem("code_verifier");
+      const verifier = localStorage.getItem("code_verifier");
 
       const body = new URLSearchParams({
         grant_type: "authorization_code",
         code,
         redirect_uri: redirectUrl,
         client_id: clientID,
-        code_verifier: codeVerifier,
+        code_verifier: verifier,
       });
 
       const response = await fetch(
@@ -85,24 +87,27 @@ const PKCESpotify = {
 
         window.history.replaceState({}, document.title, "/");
 
-        console.log("✅ TOKEN STORED");
+        console.log("TOKEN STORED");
 
         return accessToken;
       } else {
-        console.error("❌ Token exchange failed", data);
+        console.error("Token exchange failed", data);
         return null;
       }
     }
 
     // ─── Start Authorization ───
-    const codeVerifier = generateCodeVerifier();
-    const codeChallenge = await generateCodeChallenge(codeVerifier);
+    const verifier = generateCodeVerifier();
+    const challenge = await generateCodeChallenge(verifier);
 
-    localStorage.setItem("code_verifier", codeVerifier);
+    localStorage.setItem("code_verifier", verifier);
 
-    const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientID}&scope=playlist-modify-public&redirect_uri=${encodeURIComponent(
+    const scope = 
+    "playlist-modify-public user-read-private user-read-email";
+
+    const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${clientID}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(
       redirectUrl
-    )}&code_challenge_method=S256&code_challenge=${codeChallenge}`;
+    )}&code_challenge_method=S256&code_challenge=${challenge}`;
 
     window.location = authUrl;
   },
