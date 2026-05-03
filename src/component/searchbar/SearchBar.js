@@ -20,13 +20,13 @@ class SearchBar extends React.Component {
   }
 
   handleSearch() {
-    console.log("🔍 SEARCH:", this.state.term);
+    console.log("SEARCH:", this.state.term);
     this.props.onSearch(this.state.term);
   }
 
   handleKeyDown(event) {
     if (event.key === "Enter") {
-      console.log("🔍 Enter:", this.state.term);
+      console.log("Enter:", this.state.term);
       this.props.onSearch(this.state.term);
     }
   }
