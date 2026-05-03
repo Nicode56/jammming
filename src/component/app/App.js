@@ -65,6 +65,7 @@ function App() {
     padding: "20px",
     borderRadius: "5px",
     width: "100%",
+    height: "100%",
     display: "block",
     textAlign: "center", }}>
           Welcome, {user.display_name} 🎧
