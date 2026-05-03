@@ -37,12 +37,12 @@ h2 {
   width: 100%;
   text-align: center;
   padding: 20px;
-  margin-bottom: 20px;
+  margin: 0px;
 
   /* Aesthetic match */
-  background: rgba(0, 0, 0, 0.6);
+  background: #010c3f;
   color: white;
-  border-radius: 8px;
+  
 
   /* Soft glow like Spotify UI */
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
