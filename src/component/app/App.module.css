@@ -33,6 +33,24 @@ h2 {
   font-size: 1.55rem;
 }
 
+.userHeader {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 20px;
+
+  /* Aesthetic match */
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 8px;
+
+  /* Soft glow like Spotify UI */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+
+  /* Optional: subtle blur for a glassy look */
+  backdrop-filter: blur(6px);
+}
+
 .App {
   height: 100%;
   padding: 0 17% 10% 17%;
