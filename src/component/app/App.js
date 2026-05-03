@@ -60,7 +60,7 @@ function App() {
 
       {/* USER DISPLAY */}
       {user && (
-        <h2 style={{ color: "white", backgroundColor: "purple", padding: "20px", borderRadius: "5px" }}>
+        <h2 style={{ color: "white", backgroundColor: "darkblue", padding: "10px", borderRadius: "5px", marginBottom: "20px" }}>
           Welcome, {user.display_name} 🎧
         </h2>
       )}
