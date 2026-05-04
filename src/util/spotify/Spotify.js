@@ -5,7 +5,7 @@ let accessToken = localStorage.getItem("access_token") || "";
 let expiresAt = Number(localStorage.getItem("expires_at")) || 0;
 
 const clientID = "c2aa6a0635db46efa47da0e7529d44c1";
-const redirectUrl = window.location.origin + "/callback"; // Replace with your deployed URL if needed
+const redirectUrl = window.location.origin; // Replace with your deployed URL if needed
 // const redirectUrl = "http://jammmplays.vercel.app"
 
 // ─────────────────────────────────────────────
