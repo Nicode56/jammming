@@ -5,7 +5,8 @@ let accessToken = localStorage.getItem("access_token") || "";
 let expiresAt = Number(localStorage.getItem("expires_at")) || 0;
 
 const clientID = "c2aa6a0635db46efa47da0e7529d44c1";
-const redirectUrl = "http://127.0.0.1:3000";
+const redirectUrl = window.location.origin + "/callback"; // Replace with your deployed URL if needed
+// const redirectUrl = "http://jammmplays.vercel.app"
 
 // ─────────────────────────────────────────────
 // PKCE HELPERS
@@ -110,7 +111,7 @@ const Spotify = {
         localStorage.setItem("expires_at", expiresAt);
 
         // Clean URL
-        window.history.replaceState({}, document.title, redirectUrl);
+        window.history.replaceState({}, document.title, window.location.pathname);
 
         return accessToken;
       }
