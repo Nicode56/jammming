@@ -2,8 +2,8 @@ let accessToken = localStorage.getItem("access_token") || "";
 let expiresAt = Number(localStorage.getItem("expires_at")) || 0;
 
 const clientID = ""; // <-- your Spotify client ID
-const redirectUrl = "http://127.0.0.1:3000"; // Replace with your deployed URL if needed
-// const redirectUrl = "https://jammmplays.netlify.app"
+const redirectUrl = "https://jammmplays.vercel.app/callback"; // Replace with your deployed URL if needed
+// const redirectUrl = "https://jammmplays.vercel.app"
 // ─────────────────────────────
 // PKCE Helper Functions
 // ─────────────────────────────
