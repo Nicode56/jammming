@@ -5,7 +5,10 @@ let accessToken = localStorage.getItem("access_token") || "";
 let expiresAt = Number(localStorage.getItem("expires_at")) || 0;
 
 const clientID = "c2aa6a0635db46efa47da0e7529d44c1";
-const redirectUrl = window.location.origin; // Replace with your deployed URL if needed
+const redirectUrl = window.location.origin ===
+"localhost" 
+? "http://localhost:5173" 
+: "https://jammmplays.vercel.app"; // Replace with your deployed URL if needed
 // const redirectUrl = "http://jammmplays.vercel.app"
 
 // ─────────────────────────────────────────────
@@ -139,10 +142,10 @@ const Spotify = {
       `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
       `&code_challenge_method=S256` +
       `&code_challenge=${encodeURIComponent(codeChallenge)}`;
-
+    if (!code) {
     window.location = authUrl;
-    return null;
-  },
+  } return null 
+},
 
   // ─────────────────────────────
   // SEARCH TRACKS
